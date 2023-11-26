@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_boot_challenge/0-기본.dart';
+import 'package:flutter_boot_challenge/0day/0-%EA%B8%B0%EB%B3%B8.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
