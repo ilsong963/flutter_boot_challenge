@@ -112,7 +112,7 @@ class _DragBucketState extends State<DragBucket> {
             color: Colors.black,
             width: 2,
           ),
-          borderRadius: widget.data == 'rectangle' ? BorderRadius.circular(10.0) : BorderRadius.circular(50.0),
+          borderRadius: random? BorderRadius.circular(10.0) : BorderRadius.circular(50.0),
         ),
         child: const Center(
           child: Text('Drag me'),
