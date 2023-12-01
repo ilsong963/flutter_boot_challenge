@@ -48,6 +48,7 @@ class _HelloTextFieldPageState extends State<HelloTextFieldPage> {
   }
 
   void onFirstTextChanged(String value) {
+    print(value);
     if (value.isEmpty) {
       secondFocusNode.requestFocus();
     }
