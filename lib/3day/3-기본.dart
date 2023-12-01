@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -10,131 +11,136 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'FlutterBoot',
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const CanLayoutPage(),
+      home: const SlackAvatar(),
     );
   }
 }
 
-class CanLayoutPage extends StatelessWidget {
-  const CanLayoutPage({super.key});
+class SlackAvatar extends StatefulWidget {
+  const SlackAvatar({super.key});
+
+  @override
+  State<SlackAvatar> createState() => _SlackAvatarState();
+}
+
+class _SlackAvatarState extends State<SlackAvatar> {
+  double headRadius = 45.0;
+  double bodyHeight = 120.0;
+  Color backgroundColor = const Color.fromARGB(255, 17, 113, 192);
+
+  Widget _buildAvatar({
+    required double size,
+  }) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: const BorderRadius.all(Radius.circular(8))),
+      child: CustomPaint(
+        painter: AvatarPainter(
+          headRadius: headRadius,
+          bodyHeight: bodyHeight,
+        ),
+      ),
+    );
+  }
+
+  void onHeadRadiusChange(double value) {
+    setState(() => headRadius = value);
+  }
+
+  void onBodyHeightChange(double value) {
+    setState(() => bodyHeight = value);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('I can layout this'),
-          backgroundColor: Colors.red,
-        ),
-        body:  SingleChildScrollView(child: SizedBox(
-
-    width: MediaQuery.of(context).size.width,
-    height: MediaQuery.of(context).size.height,
-    child: Column(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width/2,
-              child: Row(
-                children: [
-                  Expanded(child:
-                  Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        border: Border(
-                          right: BorderSide(width: 2.5, color: Colors.black),
-                          bottom: BorderSide(width: 2.5, color: Colors.black),
-                        )),
-                  )),
-                  Expanded(child:
-              Column(
-                        children: [
-                          Expanded(
-                              child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.blue,
-                                border: Border(
-                                  left: BorderSide(width: 2.5, color: Colors.black),
-                                )),
-                          )),
-                          Expanded(
-                              child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                border: Border(
-                                  left: BorderSide(width: 2.5, color: Colors.black),
-                                  bottom: BorderSide(width: 2.5, color: Colors.black),
-                                )),
-                          )),
-                        ],
-                    ))
-                ],
-              ),
+            _buildAvatar(size: 200),
+            const SizedBox(height: 32),
+            Slider(
+              min: 35,
+              max: 55,
+              value: headRadius,
+              onChanged: onHeadRadiusChange,
             ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width ,
-              height: MediaQuery.of(context).size.width / 2,
-              child: Row(
-                children: [
-                  Expanded(child:
-
-                  Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          right: BorderSide(width: 2.5, color: Colors.black),
-                          top: BorderSide(width: 2.5, color: Colors.black),
-                        )),
-                    child: Column(
-                      children: [
-                        Expanded(
-                            flex: 2,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                              ),
-                            )),
-                        Expanded(
-                            flex: 1,
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                              ),
-                            )),
-                      ],
-                    ),
-                  ) ),
-                  Expanded(child:
-                  Container(
-                      decoration: const BoxDecoration(
-                          color: Colors.white,
-                          border: Border(
-                            left: BorderSide(width: 2.5, color: Colors.black),
-                            top: BorderSide(width: 2.5, color: Colors.black),
-                          )),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: Container(
-                                color: Colors.yellowAccent,
-                                margin: const EdgeInsets.only(top: 15, left: 15, right: 15)),
-                          ),
-                          Expanded(child: Container(color: Colors.white)),
-                        ],
-                      )),)
-                ],
-              ),
-
+            const SizedBox(height: 16),
+            Slider(
+              min: 105,
+              max: 120,
+              value: bodyHeight,
+              onChanged: onBodyHeightChange,
             ),
-            Expanded(
-                flex: 3,child: Container(color: Colors.yellow)),
-
-            Expanded(
-                flex: 2,child: Container(color: Colors.brown))
           ],
-        ))));
+        ),
+      ),
+    );
+  }
+}
+
+class AvatarPainter extends CustomPainter {
+  final double headRadius;
+  final double bodyHeight;
+
+  AvatarPainter({
+    super.repaint,
+    required this.headRadius,
+    required this.bodyHeight,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(
+        Offset(size.width / 2, size.height * 2 / 5), headRadius, paint);
+
+    canvas.drawArc(
+      Rect.fromCenter(
+          center: Offset(size.width / 3, size.height),
+          width: bodyHeight,
+          height: bodyHeight),
+      pi,
+      pi,
+      true,
+      paint,
+    );
+
+    canvas.drawArc(
+      Rect.fromCenter(
+          center: Offset(size.width * 2 / 3, size.height),
+          width: bodyHeight,
+          height: bodyHeight),
+      pi,
+      pi,
+      true,
+      paint,
+    );
+
+    canvas.drawRect(
+        Rect.fromCenter(
+            center: Offset(size.width / 2, size.height - bodyHeight / 4),
+            width: bodyHeight / 2,
+            height: bodyHeight / 2),
+        paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
